@@ -46,6 +46,7 @@ export function SortableListItem({
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
+    touchAction: 'none', // Impede conflitos com scroll
   };
 
   return (
@@ -107,7 +108,7 @@ export function SortableListItem({
           {...listeners}
           className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg cursor-grab active:cursor-grabbing"
           title="Mover lista"
-          onClick={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()} // Melhor compatibilidade com toque
         >
           <RiDragMove2Line size={20} />
         </button>
