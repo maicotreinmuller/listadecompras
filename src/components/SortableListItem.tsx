@@ -46,7 +46,7 @@ export function SortableListItem({
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-    touchAction: 'none', // Impede conflitos com scroll
+    touchAction: 'none', // Impede conflitos com o scroll no touch
   };
 
   return (
@@ -55,6 +55,7 @@ export function SortableListItem({
       style={style}
       className="bg-white rounded-2xl shadow-lg p-6 cursor-pointer hover:bg-slate-50"
       onClick={onSelect}
+      {...attributes} // Garante que os atributos de drag sejam aplicados corretamente
     >
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -104,11 +105,10 @@ export function SortableListItem({
         </button>
 
         <button
-          {...attributes}
           {...listeners}
           className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg cursor-grab active:cursor-grabbing"
           title="Mover lista"
-          onPointerDown={(e) => e.stopPropagation()} // Melhor compatibilidade com toque
+          onTouchStart={(e) => e.preventDefault()} // Permite capturar eventos de toque corretamente
         >
           <RiDragMove2Line size={20} />
         </button>

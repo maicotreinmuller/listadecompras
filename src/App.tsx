@@ -39,16 +39,36 @@ export function App() {
 
   // Handle back button/gesture
   useEffect(() => {
-    const handleBackButton = (e: PopStateEvent) => {
-      e.preventDefault();
+    // Função para lidar com o botão voltar do Android
+    const handleBackButton = () => {
       if (currentPage !== 'home') {
         setCurrentPage('home');
         setCurrentListId(null);
+        return true; // Previne o comportamento padrão
       }
+      return false; // Permite o comportamento padrão (sair do app)
     };
 
-    window.addEventListener('popstate', handleBackButton);
-    return () => window.removeEventListener('popstate', handleBackButton);
+    // Registra o manipulador para o evento de voltar do Android
+    if (window.navigator && (window.navigator as any).app) {
+      document.addEventListener('backbutton', handleBackButton, false);
+    }
+
+    // Registra o manipulador para gestos de voltar do iOS e navegador
+    const handlePopState = (e: PopStateEvent) => {
+      e.preventDefault();
+      handleBackButton();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.history.pushState({ page: currentPage }, '');
+
+    return () => {
+      if (window.navigator && (window.navigator as any).app) {
+        document.removeEventListener('backbutton', handleBackButton);
+      }
+      window.removeEventListener('popstate', handlePopState);
+    };
   }, [currentPage]);
 
   const confirmarExclusao = (id: number) => {
