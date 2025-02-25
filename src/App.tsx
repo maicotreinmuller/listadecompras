@@ -39,22 +39,19 @@ export function App() {
 
   // Handle back button/gesture
   useEffect(() => {
-    // Função para lidar com o botão voltar do Android
     const handleBackButton = () => {
       if (currentPage !== 'home') {
         setCurrentPage('home');
         setCurrentListId(null);
-        return true; // Previne o comportamento padrão
+        return true;
       }
-      return false; // Permite o comportamento padrão (sair do app)
+      return false;
     };
 
-    // Registra o manipulador para o evento de voltar do Android
     if (window.navigator && (window.navigator as any).app) {
       document.addEventListener('backbutton', handleBackButton, false);
     }
 
-    // Registra o manipulador para gestos de voltar do iOS e navegador
     const handlePopState = (e: PopStateEvent) => {
       e.preventDefault();
       handleBackButton();
@@ -144,6 +141,7 @@ export function App() {
                 onQuantidadeChange={atualizarQuantidade}
                 onValorChange={atualizarValor}
                 onDelete={confirmarExclusao}
+                onAdd={adicionarItem}
               />
             ))}
           </div>

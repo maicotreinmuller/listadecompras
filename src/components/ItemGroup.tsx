@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Item } from '../types/Item';
 import { ItemCard } from './ItemCard';
-import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
+import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa';
 import { formatarMoeda } from '../utils/formatters';
 
 interface ItemGroupProps {
@@ -11,6 +11,7 @@ interface ItemGroupProps {
   onQuantidadeChange: (id: number, quantidade: number) => void;
   onValorChange: (id: number, valor: number) => void;
   onDelete: (id: number) => void;
+  onAdd: (nome: string, grupo: string) => void;
 }
 
 export function ItemGroup({
@@ -20,11 +21,21 @@ export function ItemGroup({
   onQuantidadeChange,
   onValorChange,
   onDelete,
+  onAdd,
 }: ItemGroupProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [newItemName, setNewItemName] = useState('');
 
   const toggleExpanded = () => {
     setIsExpanded(!isExpanded);
+  };
+
+  const handleAddItem = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newItemName.trim()) {
+      onAdd(newItemName.trim(), grupo);
+      setNewItemName('');
+    }
   };
 
   const subtotal = items.reduce((acc, item) => acc + item.valor * item.quantidade, 0);
@@ -50,6 +61,24 @@ export function ItemGroup({
       </button>
 
       <div className={`space-y-2 ${isExpanded ? '' : 'hidden'}`}>
+        {/* Input para adicionar novo item */}
+        <form onSubmit={handleAddItem} className="flex gap-2 mb-3">
+          <input
+            type="text"
+            value={newItemName}
+            onChange={(e) => setNewItemName(e.target.value)}
+            placeholder="Adicionar item"
+            className="flex-1 px-3 py-2 rounded-lg bg-slate-50 border-0 focus:ring-2 focus:ring-violet-500 outline-none text-sm"
+          />
+          <button
+            type="submit"
+            className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white p-2 rounded-lg hover:opacity-90 transition-opacity"
+            disabled={!newItemName.trim()}
+          >
+            <FaPlus size={16} />
+          </button>
+        </form>
+
         {items.map((item) => (
           <ItemCard
             key={item.id}
