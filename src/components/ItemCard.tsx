@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaCheck, FaMinus, FaPlus, FaTimes } from 'react-icons/fa';
 import { Item } from '../types/Item';
 import { formatarMoeda } from '../utils/formatters';
-import { handleCurrencyInput, currencyToNumber } from '../utils/currencyInput';
+import { NumericKeyboard } from './NumericKeyboard';
 
 interface ItemCardProps {
   item: Item;
@@ -19,13 +19,15 @@ export function ItemCard({
   onValorChange,
   onDelete,
 }: ItemCardProps) {
-  const [inputValue, setInputValue] = useState(formatarMoeda(item.valor));
   const [showMenu, setShowMenu] = useState(false);
+  const [showKeyboard, setShowKeyboard] = useState(false);
+  const [numericValue, setNumericValue] = useState(
+    Math.round(item.valor * 100).toString()
+  );
 
-  const handleValorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = handleCurrencyInput(e.target.value);
-    setInputValue(newValue);
-    onValorChange(item.id, currencyToNumber(newValue));
+  const handleValorChange = (value: string) => {
+    setNumericValue(value);
+    onValorChange(item.id, Number(value) / 100);
   };
 
   return (
@@ -88,13 +90,12 @@ export function ItemCard({
 
           <span className="text-gray-400">×</span>
 
-          <input
-            type="tel"
-            value={inputValue}
-            onChange={handleValorChange}
+          <button
+            onClick={() => setShowKeyboard(true)}
             className="w-20 h-8 px-2 text-right text-sm border border-gray-100 rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
-            inputMode="numeric"
-          />
+          >
+            {formatarMoeda(item.valor)}
+          </button>
 
           <span className="text-gray-400">=</span>
 
@@ -129,6 +130,14 @@ export function ItemCard({
           </div>
         </div>
       )}
+
+      {/* Teclado Numérico */}
+      <NumericKeyboard
+        isOpen={showKeyboard}
+        onClose={() => setShowKeyboard(false)}
+        value={numericValue}
+        onChange={handleValorChange}
+      />
     </div>
   );
 }
